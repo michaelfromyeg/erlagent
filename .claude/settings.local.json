@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(asdf:*)",
+      "Bash(rebar3 new:*)",
+      "Bash(git init:*)",
+      "Bash(rebar3 compile:*)",
+      "Bash(rebar3 shell:*)",
+      "Bash(make run:*)"
+    ]
+  }
+}
