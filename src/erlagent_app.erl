@@ -3,4 +3,4 @@
 -export([main/0]).
 
 main() ->
-    io:format("Hello from erlagent!~n").
+  io:format("Hello from erlagent!~n").

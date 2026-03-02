@@ -1,9 +1,7 @@
-erlagent
-=====
+# erlagent
 
 An OTP application
 
-Build
------
+## Build
 
     $ rebar3 compile

@@ -1,17 +1,13 @@
-{application, erlagent, [
-    {description, "An OTP application"},
-    {vsn, "0.1.0"},
-    {registered, []},
-    %% {mod, {erlagent_app, []}},
-    {applications, [
-        kernel,
-        stdlib,
-        hackney,
-        jsx,
-        ssl
-    ]},
-    {env, []},
-    {modules, []},
-    {licenses, ["Apache-2.0"]},
-    {links, []}
-]}.
+{application,
+ erlagent,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  %% {mod, {erlagent_app, []}},
+  {applications, [kernel, stdlib, hackney, jsx, ssl]},
+  {env, []},
+  {modules, []},
+  {licenses, ["Apache-2.0"]},
+  {links, []}]}
+
+.
