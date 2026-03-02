@@ -27,7 +27,6 @@ list_files(Input) ->
             <<"">> -> ".";
             P -> binary_to_list(P)
         end,
-    % TODO(michaelfromyeg): append trailing slash when needed
     case file:list_dir(Path) of
         {ok, Files} -> jsx:encode(lists:map(fun list_to_binary/1, Files));
         {error, Reason} -> list_to_binary(io_lib:format("Error: ~p", [Reason]))
@@ -47,8 +46,66 @@ list_files_tool() ->
         ]
     }.
 
-% TODO(michaelfromyeg): edit file
-% edit_file(Input) ->
+edit_file(Input) ->
+    OldStr = maps:get(<<"old_str">>, Input),
+    NewStr = maps:get(<<"new_str">>, Input),
+    case OldStr =:= NewStr of
+        true ->
+            <<"Error: old_str and new_str must be different!">>;
+        false ->
+            Path = maps:get(<<"path">>, Input),
+            case filelib:is_file(binary_to_list(Path)) of
+                true ->
+                    case OldStr of
+                        <<"">> ->
+                            file:write_file(Path, NewStr),
+                            <<"OK">>;
+                        _ ->
+                            {ok, Content} = file:read_file(Path),
+                            NewContent = binary:replace(Content, OldStr, NewStr),
+                            case NewContent =:= Content of
+                                true ->
+                                    <<"Error: old_str not found in file!">>;
+                                false ->
+                                    file:write_file(Path, NewContent),
+                                    <<"OK">>
+                            end
+                    end;
+                false ->
+                    filelib:ensure_dir(Path),
+                    file:write_file(Path, NewStr),
+                    <<"OK">>
+            end
+    end.
+
+edit_file_tool() ->
+    #{
+        name => <<"edit_files">>,
+        description => <<
+            "Make edits to a text file.\n"
+            "\n"
+            "Replaces 'old_str' with 'new_str' in the given file. 'old_str' and 'new_str' must be different.\n"
+            "If the file specified doesn't exist, it will be created.\n"
+        >>,
+        function => fun edit_file/1,
+        params => [
+            #{
+                name => <<"path">>,
+                type => <<"string">>,
+                description => <<"The path to the file">>
+            },
+            #{
+                name => <<"old_str">>,
+                type => <<"string">>,
+                description => <<"Text to search for - must exactly match the original string">>
+            },
+            #{
+                name => <<"new_str">>,
+                type => <<"string">>,
+                description => <<"Text to replace old_str with">>
+            }
+        ]
+    }.
 
 tool_to_jsonschema(Tool) ->
     #{
@@ -88,7 +145,7 @@ find_tool(Name, Tools) ->
 
 run() ->
     io:format("Starting conversation...~n"),
-    Tools = [read_file_tool(), list_files_tool()],
+    Tools = [read_file_tool(), list_files_tool(), edit_file_tool()],
     run([], Tools).
 
 run(Conversation, Tools) ->
@@ -168,8 +225,7 @@ process_response(Conversation, Tools, DecBody) ->
                     Function = maps:get(function, Tool),
                     Result = Function(ToolInput),
 
-                    % TODO(michaelfromyeg): add print function for each tool
-                    % io:format("[Using ~s on ~s~n]", ToolName, ToolInput),
+                    io:format("tool: ~ts(~ts)~n", [ToolName, jsx:encode(ToolInput)]),
 
                     {true, #{
                         <<"type">> => <<"tool_result">>,
