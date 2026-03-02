@@ -107,6 +107,31 @@ edit_file_tool() ->
         ]
     }.
 
+run_command(Input) ->
+    Command = binary_to_list(maps:get(<<"command">>, Input)),
+    io:format("Run command: ~ts? [y/n]", [Command]),
+    case string:trim(io:get_line("")) of
+        "y" ->
+            list_to_binary(os:cmd(Command));
+        _ ->
+            <<"Command rejected by user.">>
+    end.
+
+run_command_tool() ->
+    #{
+        name => <<"run_command">>,
+        description => <<"Run a command">>,
+        function => fun run_command/1,
+        params => [
+            #{
+                name => <<"command">>,
+                type => <<"string">>,
+                description =>
+                    <<"The command to be run. The user has the ability to accept or reject.">>
+            }
+        ]
+    }.
+
 tool_to_jsonschema(Tool) ->
     #{
         <<"type">> => <<"object">>,
@@ -145,7 +170,7 @@ find_tool(Name, Tools) ->
 
 run() ->
     io:format("Starting conversation...~n"),
-    Tools = [read_file_tool(), list_files_tool(), edit_file_tool()],
+    Tools = [read_file_tool(), list_files_tool(), edit_file_tool(), run_command_tool()],
     run([], Tools).
 
 run(Conversation, Tools) ->
