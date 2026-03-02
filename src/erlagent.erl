@@ -97,7 +97,7 @@ edit_file_tool() ->
 
 run_command(Input) ->
   Command = binary_to_list(maps:get(<<"command">>, Input)),
-  io:format("Run command: ~ts? [y/n]", [Command]),
+  io:format("Run command: ~ts? [y/n] ", [Command]),
   UserInput = io:get_line(""),
   case string:trim(UserInput) of
     "y" ->
