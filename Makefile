@@ -8,3 +8,6 @@ shell:
 
 clean:
 	rebar3 clean
+
+fmt:
+		rebar3 fmt
