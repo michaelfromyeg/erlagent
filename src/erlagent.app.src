@@ -5,7 +5,10 @@
     %% {mod, {erlagent_app, []}},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        hackney,
+        jsx,
+        ssl
     ]},
     {env, []},
     {modules, []},

@@ -1,7 +1,7 @@
 .PHONY: run shell clean
 
 run:
-	rebar3 compile && erl -pa _build/default/lib/erlagent/ebin -noshell -eval 'erlagent_app:main(), halt().'
+	export $$(cat .env | xargs) && rebar3 shell
 
 shell:
 	rebar3 shell
